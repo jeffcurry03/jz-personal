@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F5F2ED">
+<title>Split the Bill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
+    background: #F5F2ED;
+    color: #1a1a1a;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 24px 16px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+  input, button { font-family: inherit; }
+  input:focus { outline: none; }
+  input::placeholder { color: #bbb; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 32px; animation: fadeIn .5s ease; }
+  .header .icon { font-size: 36px; margin-bottom: 4px; }
+  .header h1 {
+    font-family: 'Playfair Display', serif; font-size: 28px;
+    font-weight: 800; letter-spacing: -.5px; margin-bottom: 4px;
+  }
+  .header p { color: #888; font-size: 13px; font-weight: 400; }
+
+  /* Card */
+  .card {
+    background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.03);
+    animation: slideIn .4s ease both;
+  }
+  .card:nth-child(3) { animation-delay: .05s; }
+  .card:nth-child(4) { animation-delay: .1s; }
+  .card-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #999; margin-bottom: 12px;
+  }
+
+  /* People badges */
+  .people-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 20px; padding: 4px 10px 4px 8px;
+    font-size: 12px; font-weight: 600; color: #2a2a2a; white-space: nowrap;
+    border: 1.5px solid transparent;
+  }
+  .badge .avatar {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .badge .remove {
+    cursor: pointer; opacity: .45; margin-left: 2px;
+    font-size: 15px; line-height: 1; border: none; background: none;
+    color: inherit; padding: 0;
+  }
+  .badge .remove:hover { opacity: .8; }
+
+  /* Add person row */
+  .add-row { display: flex; gap: 8px; }
+  .add-row input {
+    flex: 1; padding: 8px 12px; border-radius: 10px;
+    border: 1.5px solid #e8e8e8; font-size: 13px; background: #fafafa;
+    transition: border-color .15s;
+  }
+  .add-row input:focus { border-color: #ccc; }
+  .add-row button {
+    padding: 8px 16px; border-radius: 10px; border: none;
+    background: #1a1a1a; color: #fff; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .add-row button:hover { opacity: .85; }
+
+  /* Item card */
+  .item-card {
+    padding: 16px; border-radius: 12px; background: #fafaf8;
+    border: 1px solid #f0efe8; margin-bottom: 12px;
+    animation: slideIn .3s ease both;
+  }
+  .item-top { display: flex; gap: 8px; margin-bottom: 10px; }
+  .item-top .name-input {
+    flex: 1; padding: 8px 12px; border-radius: 8px;
+    border: 1.5px solid #e8e8e8; font-size: 13px; background: #fff;
+  }
+  .price-wrap { position: relative; }
+  .price-wrap .dollar {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: #999; font-size: 13px; font-weight: 500; pointer-events: none;
+  }
+  .price-wrap input {
+    width: 100px; padding: 8px 12px 8px 22px; border-radius: 8px;
+    border: 1.5px solid #e8e8e8; font-size: 13px; background: #fff;
+  }
+  .remove-item {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: #fee; color: #c44; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    align-self: center; transition: background .15s; flex-shrink: 0;
+  }
+  .remove-item:hover { background: #fdd; }
+
+  .split-label {
+    font-size: 11px; font-weight: 600; color: #aaa;
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .split-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .split-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px 4px 6px; border-radius: 20px;
+    border: 2px solid #e0e0e0; background: #fafafa;
+    cursor: pointer; font-size: 12px; font-weight: 600;
+    color: #999; transition: all .15s ease;
+  }
+  .split-btn.active { color: #2a2a2a; }
+  .split-btn .dot {
+    width: 18px; height: 18px; border-radius: 50%; background: #ddd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #fff; transition: all .15s;
+  }
+  .split-btn.active .dot { background: var(--pc); }
+  .each-hint { margin-top: 8px; font-size: 11px; color: #999; font-style: italic; }
+
+  .add-item-btn {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 2px dashed #ddd; background: transparent;
+    color: #999; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s;
+  }
+  .add-item-btn:hover { border-color: #bbb; color: #666; }
+
+  /* Tax & Tip */
+  .tax-tip-row { display: flex; gap: 12px; }
+  .tax-tip-row > div { flex: 1; }
+  .field-label { font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
+  .tax-input {
+    width: 100%; padding: 8px 12px; border-radius: 8px;
+    border: 1.5px solid #e8e8e8; font-size: 13px; background: #fafafa;
+  }
+  .tip-presets { display: flex; gap: 6px; margin-bottom: 6px; }
+  .tip-btn {
+    flex: 1; padding: 8px 4px; border-radius: 8px;
+    border: 1.5px solid #e8e8e8; background: #fafafa;
+    color: #666; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .15s;
+  }
+  .tip-btn.active { border-color: #1a1a1a; background: #1a1a1a; color: #fff; }
+
+  /* Totals */
+  .totals-card {
+    background: #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 16px;
+    color: #fff; animation: slideIn .6s ease both;
+  }
+  .totals-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .totals-row .lbl { font-size: 13px; color: #999; }
+  .totals-row .val { font-size: 13px; font-weight: 600; }
+  .totals-divider { border-top: 1px solid #333; padding-top: 10px; margin-top: 8px; }
+  .totals-divider .lbl { font-size: 16px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .totals-divider .val { font-size: 20px; font-weight: 800; font-family: 'Playfair Display', serif; }
+
+  /* Per-person breakdown */
+  .person-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+  }
+  .person-row + .person-row { border-top: 1px solid #f0f0f0; }
+  .person-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .person-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .person-name { font-size: 14px; font-weight: 600; }
+  .person-items { font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+  .person-total { font-size: 18px; font-weight: 700; font-family: 'Playfair Display', serif; text-align: right; }
+  .person-extras { font-size: 10px; color: #bbb; text-align: right; }
+
+  .footer { text-align: center; padding: 12px 0 24px; color: #ccc; font-size: 11px; }
+
+  /* Reset button */
+  .reset-btn {
+    display: block; margin: 0 auto 24px; padding: 10px 24px;
+    border-radius: 10px; border: 1.5px solid #ddd; background: #fff;
+    color: #999; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all .15s;
+  }
+  .reset-btn:hover { border-color: #c44; color: #c44; }
+
+  @keyframes slideIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+const COLORS = ["#E8B4B8","#B8D4E3","#C5D5A0","#E8CFA0","#C4B8D9","#A0D5C8","#D9B8A0","#B8C4E3","#D5A0B8","#A0C4A0"];
+
+let state = {
+  people: ["You"],
+  items: [{ name: "", price: "", assignedTo: [0] }],
+  taxPercent: "",
+  tipPercent: "",
+};
+
+function fmt(v) { return "$" + (v || 0).toFixed(2); }
+function color(i) { return COLORS[i % COLORS.length]; }
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+function render() {
+  const { people, items, taxPercent, tipPercent } = state;
+  const subtotal = items.reduce((s, it) => s + (parseFloat(it.price) || 0), 0);
+  const taxAmt = subtotal * ((parseFloat(taxPercent) || 0) / 100);
+  const tipAmt = subtotal * ((parseFloat(tipPercent) || 0) / 100);
+  const total = subtotal + taxAmt + tipAmt;
+
+  const personTotals = people.map((_, pi) => {
+    let ps = 0;
+    items.forEach(it => {
+      const p = parseFloat(it.price) || 0;
+      if (it.assignedTo.includes(pi)) ps += p / it.assignedTo.length;
+    });
+    const share = subtotal > 0 ? ps / subtotal : 0;
+    return { subtotal: ps, tax: taxAmt * share, tip: tipAmt * share, total: ps + taxAmt * share + tipAmt * share };
+  });
+
+  let html = `
+    <div class="header">
+      <div class="icon">🧾</div>
+      <h1>Split the Bill</h1>
+      <p>Add items, assign people, done.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Who's splitting?</div>
+      <div class="people-list">
+        ${people.map((p, i) => `
+          <div class="badge" style="background:${color(i)}22;border-color:${color(i)}66">
+            <div class="avatar" style="background:${color(i)}">${esc(p[0].toUpperCase())}</div>
+            ${esc(p)}
+            ${people.length > 1 ? `<button class="remove" onclick="removePerson(${i})">×</button>` : ""}
+          </div>
+        `).join("")}
+      </div>
+      <div class="add-row">
+        <input id="newPerson" placeholder="Add a name..." onkeydown="if(event.key==='Enter')addPerson()">
+        <button onclick="addPerson()">Add</button>
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay:.05s">
+      <div class="card-label">Items ordered</div>
+      ${items.map((it, idx) => {
+        const price = parseFloat(it.price) || 0;
+        const perPerson = it.assignedTo.length > 1 && price > 0
+          ? `<div class="each-hint">${fmt(price / it.assignedTo.length)} each</div>` : "";
+        return `
+        <div class="item-card">
+          <div class="item-top">
+            <input class="name-input" placeholder="Item name" value="${esc(it.name)}" oninput="updateItem(${idx},'name',this.value)">
+            <div class="price-wrap">
+              <span class="dollar">$</span>
+              <input type="number" step="0.01" placeholder="0.00" value="${esc(String(it.price))}" oninput="updateItem(${idx},'price',this.value)">
+            </div>
+            ${items.length > 1 ? `<button class="remove-item" onclick="removeItem(${idx})">×</button>` : ""}
+          </div>
+          <div class="split-label">Split between</div>
+          <div class="split-row">
+            ${people.map((p, pi) => {
+              const active = it.assignedTo.includes(pi);
+              const c = color(pi);
+              return `<button class="split-btn${active ? " active" : ""}" style="${active ? `border-color:${c};background:${c}20;--pc:${c}` : `--pc:${c}`}" onclick="togglePerson(${idx},${pi})">
+                <span class="dot" ${active ? `style="background:${c}"` : ""}>${active ? "✓" : esc(p[0].toUpperCase())}</span>
+                ${esc(p)}
+              </button>`;
+            }).join("")}
+          </div>
+          ${perPerson}
+        </div>`;
+      }).join("")}
+      <button class="add-item-btn" onclick="addItem()">+ Add item</button>
+    </div>
+
+    <div class="card" style="animation-delay:.1s">
+      <div class="card-label">Tax & Tip</div>
+      <div class="tax-tip-row">
+        <div>
+          <div class="field-label">Tax %</div>
+          <input class="tax-input" type="number" step="0.1" placeholder="8.875" value="${esc(String(taxPercent))}" oninput="state.taxPercent=this.value;render()">
+        </div>
+        <div>
+          <div class="field-label">Tip %</div>
+          <div class="tip-presets">
+            ${[15,18,20,25].map(t => `<button class="tip-btn${parseFloat(tipPercent)===t?" active":""}" onclick="state.tipPercent='${t}';render()">${t}%</button>`).join("")}
+          </div>
+          <input class="tax-input" type="number" step="1" placeholder="Custom %" value="${esc(String(tipPercent))}" oninput="state.tipPercent=this.value;render()">
+        </div>
+      </div>
+    </div>
+
+    <div class="totals-card">
+      <div class="totals-row"><span class="lbl">Subtotal</span><span class="val">${fmt(subtotal)}</span></div>
+      ${taxAmt > 0 ? `<div class="totals-row"><span class="lbl">Tax (${esc(String(taxPercent))}%)</span><span class="val">${fmt(taxAmt)}</span></div>` : ""}
+      ${tipAmt > 0 ? `<div class="totals-row"><span class="lbl">Tip (${esc(String(tipPercent))}%)</span><span class="val">${fmt(tipAmt)}</span></div>` : ""}
+      <div class="totals-row totals-divider"><span class="lbl">Total</span><span class="val">${fmt(total)}</span></div>
+    </div>
+
+    ${subtotal > 0 ? `
+    <div class="card" style="animation-delay:.15s">
+      <div class="card-label">Each person owes</div>
+      ${people.map((p, pi) => {
+        const itemNames = items.filter(it => it.assignedTo.includes(pi) && (parseFloat(it.price)||0) > 0).map(it => it.name || "item").join(", ");
+        return `
+        <div class="person-row">
+          <div class="person-left">
+            <div class="person-avatar" style="background:${color(pi)}">${esc(p[0].toUpperCase())}</div>
+            <div>
+              <div class="person-name">${esc(p)}</div>
+              <div class="person-items">${esc(itemNames)}</div>
+            </div>
+          </div>
+          <div>
+            <div class="person-total">${fmt(personTotals[pi].total)}</div>
+            ${(taxAmt > 0 || tipAmt > 0) ? `<div class="person-extras">${fmt(personTotals[pi].subtotal)} + extras</div>` : ""}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>` : ""}
+
+    <button class="reset-btn" onclick="resetAll()">Reset bill</button>
+    <div class="footer">tap people to assign items · split shared dishes easily</div>
+  `;
+  document.getElementById("app").innerHTML = html;
+}
+
+function addPerson() {
+  const inp = document.getElementById("newPerson");
+  const name = inp.value.trim();
+  if (!name || state.people.includes(name)) return;
+  state.people.push(name);
+  state.items.forEach(it => it.assignedTo.push(state.people.length - 1));
+  render();
+  setTimeout(() => { const el = document.getElementById("newPerson"); if (el) { el.value = ""; el.focus(); } }, 0);
+}
+
+function removePerson(idx) {
+  if (state.people.length <= 1) return;
+  state.people.splice(idx, 1);
+  state.items.forEach(it => {
+    it.assignedTo = it.assignedTo.filter(a => a !== idx).map(a => a > idx ? a - 1 : a);
+    if (it.assignedTo.length === 0) it.assignedTo = [0];
+  });
+  render();
+}
+
+function addItem() {
+  state.items.push({ name: "", price: "", assignedTo: state.people.map((_, i) => i) });
+  render();
+}
+
+function removeItem(idx) {
+  if (state.items.length <= 1) return;
+  state.items.splice(idx, 1);
+  render();
+}
+
+function updateItem(idx, field, value) {
+  state.items[idx][field] = value;
+  // Don't re-render on every keystroke for text fields to avoid losing focus
+  if (field === "price") {
+    // Debounced render for price changes
+    clearTimeout(window._priceTimer);
+    window._priceTimer = setTimeout(render, 400);
+  }
+}
+
+function togglePerson(itemIdx, personIdx) {
+  const arr = state.items[itemIdx].assignedTo;
+  const i = arr.indexOf(personIdx);
+  if (i >= 0) { if (arr.length > 1) arr.splice(i, 1); }
+  else arr.push(personIdx);
+  render();
+}
+
+function resetAll() {
+  state = { people: ["You"], items: [{ name: "", price: "", assignedTo: [0] }], taxPercent: "", tipPercent: "" };
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
