@@ -31,7 +31,6 @@
 
   .wrap { max-width: 640px; margin: 0 auto; }
 
-  /* Header */
   .header { text-align: center; margin-bottom: 32px; animation: fadeIn .5s ease; }
   .header .icon { font-size: 36px; margin-bottom: 4px; }
   .header h1 {
@@ -40,20 +39,22 @@
   }
   .header p { color: #888; font-size: 13px; font-weight: 400; }
 
-  /* Card */
   .card {
     background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.03);
     animation: slideIn .4s ease both;
   }
-  .card:nth-child(3) { animation-delay: .05s; }
-  .card:nth-child(4) { animation-delay: .1s; }
   .card-label {
     font-size: 11px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 1.2px; color: #999; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .item-count {
+    font-size: 10px; font-weight: 600; color: #bbb;
+    background: #f5f5f5; padding: 2px 8px; border-radius: 10px;
+    text-transform: none; letter-spacing: 0;
   }
 
-  /* People badges */
   .people-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -73,10 +74,9 @@
   }
   .badge .remove:hover { opacity: .8; }
 
-  /* Add person row */
   .add-row { display: flex; gap: 8px; }
   .add-row input {
-    flex: 1; padding: 8px 12px; border-radius: 10px;
+    flex: 1; min-width: 0; padding: 8px 12px; border-radius: 10px;
     border: 1.5px solid #e8e8e8; font-size: 13px; background: #fafafa;
     transition: border-color .15s;
   }
@@ -84,37 +84,69 @@
   .add-row button {
     padding: 8px 16px; border-radius: 10px; border: none;
     background: #1a1a1a; color: #fff; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: opacity .15s;
+    cursor: pointer; transition: opacity .15s; flex-shrink: 0;
   }
   .add-row button:hover { opacity: .85; }
 
-  /* Item card */
+  /* Item card — fixed layout for mobile */
   .item-card {
-    padding: 16px; border-radius: 12px; background: #fafaf8;
-    border: 1px solid #f0efe8; margin-bottom: 12px;
-    animation: slideIn .3s ease both;
+    padding: 14px; border-radius: 12px; background: #fafaf8;
+    border: 1px solid #f0efe8; margin-bottom: 10px;
+    overflow: hidden;
   }
-  .item-top { display: flex; gap: 8px; margin-bottom: 10px; }
-  .item-top .name-input {
-    flex: 1; padding: 8px 12px; border-radius: 8px;
+  .item-card.collapsed { cursor: pointer; }
+  .item-card.collapsed .item-body { display: none; }
+
+  .item-header {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .item-header .name-input {
+    flex: 1; min-width: 0; padding: 8px 10px; border-radius: 8px;
     border: 1.5px solid #e8e8e8; font-size: 13px; background: #fff;
   }
-  .price-wrap { position: relative; }
+  .price-wrap {
+    position: relative; flex-shrink: 0; width: 88px;
+  }
   .price-wrap .dollar {
-    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
     color: #999; font-size: 13px; font-weight: 500; pointer-events: none;
   }
   .price-wrap input {
-    width: 100px; padding: 8px 12px 8px 22px; border-radius: 8px;
+    width: 100%; padding: 8px 10px 8px 20px; border-radius: 8px;
     border: 1.5px solid #e8e8e8; font-size: 13px; background: #fff;
   }
   .remove-item {
-    width: 32px; height: 32px; border-radius: 8px; border: none;
-    background: #fee; color: #c44; cursor: pointer; font-size: 16px;
+    width: 30px; height: 30px; min-width: 30px; border-radius: 8px; border: none;
+    background: #fee; color: #c44; cursor: pointer; font-size: 14px;
     display: flex; align-items: center; justify-content: center;
-    align-self: center; transition: background .15s; flex-shrink: 0;
+    flex-shrink: 0; transition: background .15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .remove-item:hover { background: #fdd; }
+
+  .item-body { margin-top: 10px; }
+
+  /* Collapsed summary row */
+  .collapsed-summary {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; padding: 10px 14px; border-radius: 12px;
+    background: #fafaf8; border: 1px solid #f0efe8; margin-bottom: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .collapsed-summary:active { background: #f0efe8; }
+  .collapsed-info { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .collapsed-info .item-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .collapsed-info .item-people {
+    display: flex; gap: -4px; flex-shrink: 0;
+  }
+  .collapsed-info .mini-dot {
+    width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 7px; font-weight: 700; color: #fff; margin-left: -4px;
+  }
+  .collapsed-info .mini-dot:first-child { margin-left: 0; }
+  .collapsed-price { font-size: 13px; font-weight: 700; color: #1a1a1a; flex-shrink: 0; }
+  .chevron { font-size: 12px; color: #ccc; margin-left: 6px; transition: transform .2s; }
 
   .split-label {
     font-size: 11px; font-weight: 600; color: #aaa;
@@ -127,6 +159,7 @@
     border: 2px solid #e0e0e0; background: #fafafa;
     cursor: pointer; font-size: 12px; font-weight: 600;
     color: #999; transition: all .15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
   .split-btn.active { color: #2a2a2a; }
   .split-btn .dot {
@@ -137,6 +170,17 @@
   .split-btn.active .dot { background: var(--pc); }
   .each-hint { margin-top: 8px; font-size: 11px; color: #999; font-style: italic; }
 
+  /* Select all / none buttons */
+  .split-actions { display: flex; gap: 8px; margin-top: 6px; }
+  .split-action-btn {
+    font-size: 11px; font-weight: 600; color: #999;
+    background: none; border: none; cursor: pointer;
+    padding: 2px 0; text-decoration: underline;
+    text-underline-offset: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .split-action-btn:hover { color: #666; }
+
   .add-item-btn {
     width: 100%; padding: 12px; border-radius: 10px;
     border: 2px dashed #ddd; background: transparent;
@@ -145,27 +189,36 @@
   }
   .add-item-btn:hover { border-color: #bbb; color: #666; }
 
-  /* Tax & Tip */
+  /* Collapse/expand toggle */
+  .collapse-toggle {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 8px;
+    border: 1px solid #eee; background: #fafafa;
+    font-size: 11px; font-weight: 600; color: #999; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .collapse-toggle:hover { background: #f0f0f0; }
+
   .tax-tip-row { display: flex; gap: 12px; }
-  .tax-tip-row > div { flex: 1; }
+  .tax-tip-row > div { flex: 1; min-width: 0; }
   .field-label { font-size: 12px; font-weight: 600; color: #666; margin-bottom: 4px; }
   .tax-input {
     width: 100%; padding: 8px 12px; border-radius: 8px;
     border: 1.5px solid #e8e8e8; font-size: 13px; background: #fafafa;
   }
-  .tip-presets { display: flex; gap: 6px; margin-bottom: 6px; }
+  .tip-presets { display: flex; gap: 4px; margin-bottom: 6px; }
   .tip-btn {
-    flex: 1; padding: 8px 4px; border-radius: 8px;
+    flex: 1; padding: 8px 2px; border-radius: 8px;
     border: 1.5px solid #e8e8e8; background: #fafafa;
-    color: #666; font-size: 12px; font-weight: 600;
+    color: #666; font-size: 11px; font-weight: 600;
     cursor: pointer; transition: all .15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .tip-btn.active { border-color: #1a1a1a; background: #1a1a1a; color: #fff; }
 
-  /* Totals */
   .totals-card {
     background: #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 16px;
-    color: #fff; animation: slideIn .6s ease both;
+    color: #fff;
   }
   .totals-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .totals-row .lbl { font-size: 13px; color: #999; }
@@ -174,26 +227,29 @@
   .totals-divider .lbl { font-size: 16px; font-weight: 700; font-family: 'Playfair Display', serif; }
   .totals-divider .val { font-size: 20px; font-weight: 800; font-family: 'Playfair Display', serif; }
 
-  /* Per-person breakdown */
   .person-row {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 0;
+    padding: 12px 0; gap: 10px;
   }
   .person-row + .person-row { border-top: 1px solid #f0f0f0; }
-  .person-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .person-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
   .person-avatar {
     width: 36px; height: 36px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
+  .person-info { min-width: 0; }
   .person-name { font-size: 14px; font-weight: 600; }
-  .person-items { font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-  .person-total { font-size: 18px; font-weight: 700; font-family: 'Playfair Display', serif; text-align: right; }
-  .person-extras { font-size: 10px; color: #bbb; text-align: right; }
+  .person-items {
+    font-size: 11px; color: #999; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; max-width: 160px;
+  }
+  .person-right { flex-shrink: 0; text-align: right; }
+  .person-total { font-size: 18px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .person-extras { font-size: 10px; color: #bbb; }
 
   .footer { text-align: center; padding: 12px 0 24px; color: #ccc; font-size: 11px; }
 
-  /* Reset button */
   .reset-btn {
     display: block; margin: 0 auto 24px; padding: 10px 24px;
     border-radius: 10px; border: 1.5px solid #ddd; background: #fff;
@@ -217,6 +273,8 @@ let state = {
   items: [{ name: "", price: "", assignedTo: [0] }],
   taxPercent: "",
   tipPercent: "",
+  collapsed: {},    // itemIdx -> true if collapsed
+  allCollapsed: false,
 };
 
 function fmt(v) { return "$" + (v || 0).toFixed(2); }
@@ -224,7 +282,7 @@ function color(i) { return COLORS[i % COLORS.length]; }
 function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 
 function render() {
-  const { people, items, taxPercent, tipPercent } = state;
+  const { people, items, taxPercent, tipPercent, collapsed, allCollapsed } = state;
   const subtotal = items.reduce((s, it) => s + (parseFloat(it.price) || 0), 0);
   const taxAmt = subtotal * ((parseFloat(taxPercent) || 0) / 100);
   const tipAmt = subtotal * ((parseFloat(tipPercent) || 0) / 100);
@@ -240,6 +298,9 @@ function render() {
     return { subtotal: ps, tax: taxAmt * share, tip: tipAmt * share, total: ps + taxAmt * share + tipAmt * share };
   });
 
+  const filledItems = items.filter(it => it.name || (parseFloat(it.price) || 0) > 0).length;
+  const showCollapseToggle = items.length > 3;
+
   let html = `
     <div class="header">
       <div class="icon">🧾</div>
@@ -248,7 +309,7 @@ function render() {
     </div>
 
     <div class="card">
-      <div class="card-label">Who's splitting?</div>
+      <div class="card-label">Who's splitting? <span class="item-count">${people.length} ${people.length === 1 ? 'person' : 'people'}</span></div>
       <div class="people-list">
         ${people.map((p, i) => `
           <div class="badge" style="background:${color(i)}22;border-color:${color(i)}66">
@@ -264,52 +325,83 @@ function render() {
       </div>
     </div>
 
-    <div class="card" style="animation-delay:.05s">
-      <div class="card-label">Items ordered</div>
+    <div class="card">
+      <div class="card-label">Items ordered <span class="item-count">${items.length} ${items.length === 1 ? 'item' : 'items'}${subtotal > 0 ? ' · ' + fmt(subtotal) : ''}</span></div>
+
+      ${showCollapseToggle ? `
+        <button class="collapse-toggle" onclick="toggleAllCollapsed()">
+          ${allCollapsed ? '▼ Expand all items' : '▲ Collapse all items'}
+        </button>
+      ` : ''}
+
       ${items.map((it, idx) => {
         const price = parseFloat(it.price) || 0;
+        const isCollapsed = collapsed[idx] && (it.name || price > 0);
         const perPerson = it.assignedTo.length > 1 && price > 0
           ? `<div class="each-hint">${fmt(price / it.assignedTo.length)} each</div>` : "";
+
+        if (isCollapsed) {
+          return `
+          <div class="collapsed-summary" onclick="toggleCollapse(${idx})">
+            <div class="collapsed-info">
+              <span class="item-name">${esc(it.name || 'Unnamed')}</span>
+              <span class="item-people">${it.assignedTo.slice(0, 5).map(pi => `<span class="mini-dot" style="background:${color(pi)}">${esc(people[pi]?.[0]?.toUpperCase() || '?')}</span>`).join('')}${it.assignedTo.length > 5 ? `<span class="mini-dot" style="background:#ccc">+${it.assignedTo.length - 5}</span>` : ''}</span>
+            </div>
+            <div style="display:flex;align-items:center">
+              <span class="collapsed-price">${fmt(price)}</span>
+              <span class="chevron">▼</span>
+            </div>
+          </div>`;
+        }
+
         return `
         <div class="item-card">
-          <div class="item-top">
+          <div class="item-header">
             <input class="name-input" placeholder="Item name" value="${esc(it.name)}" oninput="updateItem(${idx},'name',this.value)">
             <div class="price-wrap">
               <span class="dollar">$</span>
               <input type="number" step="0.01" placeholder="0.00" value="${esc(String(it.price))}" oninput="updateItem(${idx},'price',this.value)">
             </div>
-            ${items.length > 1 ? `<button class="remove-item" onclick="removeItem(${idx})">×</button>` : ""}
+            ${items.length > 1 ? `<button class="remove-item" onclick="removeItem(${idx})" aria-label="Remove item">×</button>` : ""}
           </div>
-          <div class="split-label">Split between</div>
-          <div class="split-row">
-            ${people.map((p, pi) => {
-              const active = it.assignedTo.includes(pi);
-              const c = color(pi);
-              return `<button class="split-btn${active ? " active" : ""}" style="${active ? `border-color:${c};background:${c}20;--pc:${c}` : `--pc:${c}`}" onclick="togglePerson(${idx},${pi})">
-                <span class="dot" ${active ? `style="background:${c}"` : ""}>${active ? "✓" : esc(p[0].toUpperCase())}</span>
-                ${esc(p)}
-              </button>`;
-            }).join("")}
+          <div class="item-body">
+            <div class="split-label">Split between</div>
+            <div class="split-row">
+              ${people.map((p, pi) => {
+                const active = it.assignedTo.includes(pi);
+                const c = color(pi);
+                return `<button class="split-btn${active ? " active" : ""}" style="${active ? `border-color:${c};background:${c}20;--pc:${c}` : `--pc:${c}`}" onclick="togglePerson(${idx},${pi})">
+                  <span class="dot" ${active ? `style="background:${c}"` : ""}>${active ? "✓" : esc(p[0].toUpperCase())}</span>
+                  ${esc(p)}
+                </button>`;
+              }).join("")}
+            </div>
+            ${people.length > 3 ? `
+            <div class="split-actions">
+              <button class="split-action-btn" onclick="assignAll(${idx})">Select all</button>
+              <button class="split-action-btn" onclick="assignNone(${idx})">Clear</button>
+            </div>` : ''}
+            ${perPerson}
+            ${(it.name || price > 0) ? `<div class="split-actions"><button class="split-action-btn" onclick="toggleCollapse(${idx})">▲ Collapse</button></div>` : ''}
           </div>
-          ${perPerson}
         </div>`;
       }).join("")}
       <button class="add-item-btn" onclick="addItem()">+ Add item</button>
     </div>
 
-    <div class="card" style="animation-delay:.1s">
+    <div class="card">
       <div class="card-label">Tax & Tip</div>
       <div class="tax-tip-row">
         <div>
           <div class="field-label">Tax %</div>
-          <input class="tax-input" type="number" step="0.1" placeholder="8.875" value="${esc(String(taxPercent))}" oninput="state.taxPercent=this.value;render()">
+          <input class="tax-input" type="number" step="0.1" placeholder="8.875" value="${esc(String(taxPercent))}" oninput="state.taxPercent=this.value;renderTotals()">
         </div>
         <div>
           <div class="field-label">Tip %</div>
           <div class="tip-presets">
             ${[15,18,20,25].map(t => `<button class="tip-btn${parseFloat(tipPercent)===t?" active":""}" onclick="state.tipPercent='${t}';render()">${t}%</button>`).join("")}
           </div>
-          <input class="tax-input" type="number" step="1" placeholder="Custom %" value="${esc(String(tipPercent))}" oninput="state.tipPercent=this.value;render()">
+          <input class="tax-input" type="number" step="1" placeholder="Custom %" value="${esc(String(tipPercent))}" oninput="state.tipPercent=this.value;renderTotals()">
         </div>
       </div>
     </div>
@@ -322,7 +414,7 @@ function render() {
     </div>
 
     ${subtotal > 0 ? `
-    <div class="card" style="animation-delay:.15s">
+    <div class="card">
       <div class="card-label">Each person owes</div>
       ${people.map((p, pi) => {
         const itemNames = items.filter(it => it.assignedTo.includes(pi) && (parseFloat(it.price)||0) > 0).map(it => it.name || "item").join(", ");
@@ -330,12 +422,12 @@ function render() {
         <div class="person-row">
           <div class="person-left">
             <div class="person-avatar" style="background:${color(pi)}">${esc(p[0].toUpperCase())}</div>
-            <div>
+            <div class="person-info">
               <div class="person-name">${esc(p)}</div>
               <div class="person-items">${esc(itemNames)}</div>
             </div>
           </div>
-          <div>
+          <div class="person-right">
             <div class="person-total">${fmt(personTotals[pi].total)}</div>
             ${(taxAmt > 0 || tipAmt > 0) ? `<div class="person-extras">${fmt(personTotals[pi].subtotal)} + extras</div>` : ""}
           </div>
@@ -344,9 +436,15 @@ function render() {
     </div>` : ""}
 
     <button class="reset-btn" onclick="resetAll()">Reset bill</button>
-    <div class="footer">tap people to assign items · split shared dishes easily</div>
+    <div class="footer">tap people to assign items · collapse items to save space</div>
   `;
   document.getElementById("app").innerHTML = html;
+}
+
+// Lighter re-render for tax/tip that uses debounce
+function renderTotals() {
+  clearTimeout(window._totalsTimer);
+  window._totalsTimer = setTimeout(render, 300);
 }
 
 function addPerson() {
@@ -372,19 +470,27 @@ function removePerson(idx) {
 function addItem() {
   state.items.push({ name: "", price: "", assignedTo: state.people.map((_, i) => i) });
   render();
+  // Scroll to bottom so new item is visible
+  setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
 }
 
 function removeItem(idx) {
   if (state.items.length <= 1) return;
   state.items.splice(idx, 1);
+  // Clean up collapsed state
+  const newCollapsed = {};
+  Object.keys(state.collapsed).forEach(k => {
+    const ki = parseInt(k);
+    if (ki < idx) newCollapsed[ki] = state.collapsed[ki];
+    else if (ki > idx) newCollapsed[ki - 1] = state.collapsed[ki];
+  });
+  state.collapsed = newCollapsed;
   render();
 }
 
 function updateItem(idx, field, value) {
   state.items[idx][field] = value;
-  // Don't re-render on every keystroke for text fields to avoid losing focus
   if (field === "price") {
-    // Debounced render for price changes
     clearTimeout(window._priceTimer);
     window._priceTimer = setTimeout(render, 400);
   }
@@ -398,8 +504,34 @@ function togglePerson(itemIdx, personIdx) {
   render();
 }
 
+function assignAll(itemIdx) {
+  state.items[itemIdx].assignedTo = state.people.map((_, i) => i);
+  render();
+}
+
+function assignNone(itemIdx) {
+  // Keep at least one person assigned (first person)
+  state.items[itemIdx].assignedTo = [0];
+  render();
+}
+
+function toggleCollapse(idx) {
+  state.collapsed[idx] = !state.collapsed[idx];
+  render();
+}
+
+function toggleAllCollapsed() {
+  state.allCollapsed = !state.allCollapsed;
+  state.items.forEach((it, idx) => {
+    if (it.name || (parseFloat(it.price) || 0) > 0) {
+      state.collapsed[idx] = state.allCollapsed;
+    }
+  });
+  render();
+}
+
 function resetAll() {
-  state = { people: ["You"], items: [{ name: "", price: "", assignedTo: [0] }], taxPercent: "", tipPercent: "" };
+  state = { people: ["You"], items: [{ name: "", price: "", assignedTo: [0] }], taxPercent: "", tipPercent: "", collapsed: {}, allCollapsed: false };
   render();
 }
 
